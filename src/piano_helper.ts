@@ -5,36 +5,56 @@
 	if (tab?.url) {
 		try {
 			const url = tab.url;
-			
-            const tacCookie = await chrome.cookies.get({ name: "__tac", url });
-            if(tacCookie) {
-                displayTAC(processTAC(tacCookie));
-                displayAID(processTAC(tacCookie).aud);
-            }
-			
-			const utpCookie = await chrome.cookies.get({ name: "__utp", url });
-            if (utpCookie) {
-                displayUTP(processUTP(utpCookie));
-            }
 
+			const tacCookie = await chrome.cookies.get({ name: "__tac", url });
+			if (tacCookie) {
+				displayTAC(processTAC(tacCookie));
+			}
+
+			const utpCookie = await chrome.cookies.get({ name: "__utp", url });
+			if (utpCookie) {
+				displayUTP(processUTP(utpCookie));
+			}
 		} catch (err) {
 			console.warn(err);
 		}
 	}
 })();
 
-function displayAID(aid: string) {
-	const aidDiv = document.getElementById("aid");
+function renderDataOnElement(data: string, idSelector: string) {
+	const elementMarkedById = document.getElementById(idSelector);
 
-	if (aidDiv) {
-		aidDiv.textContent = aid;
+	if (elementMarkedById) {
+		elementMarkedById.textContent = data;
+	} else {
+		console.warn(`Can not add data: ${data} to element: ${idSelector}`);
 	}
 }
 
-function displayTAC(tacData: {}) {
+interface TACData {
+	aud: string;
+	sub: {
+		u: string;
+		al: {
+			[key: string]: TACSubscription[]
+		}
+	}
+};
+
+interface TACSubscription { r: string; e: number; ia: boolean };
+
+function displayTAC(tacData: TACData) {
+	renderDataOnElement(tacData.aud, "tac-aid");
+	renderDataOnElement(tacData.sub.u, "tac-user-id");
+
+	const subscriptions = tacData.sub.al[tacData.aud];
+	const validSubscriptions = subscriptions.filter(s => s.ia);
+	const invalidSubscriptions = subscriptions.filter(s => !s.ia);
+	renderSubscriptions(validSubscriptions, 'tac-valid-subscriptions');
+	renderSubscriptions(invalidSubscriptions, 'tac-invalid-subscriptions');
+
 	const tacDiv = document.getElementById("tac");
 	const pre = document.createElement("pre");
-	
 	pre.textContent = JSON.stringify(tacData, null, 2);
 
 	if (tacDiv) {
@@ -42,29 +62,33 @@ function displayTAC(tacData: {}) {
 	}
 }
 
+function renderSubscriptions(subscriptions: TACSubscription[], idSelector: string) {
+	const subscriptionsString = subscriptions.map(s => s.r).sort().join(', ');
+	renderDataOnElement(subscriptionsString, idSelector);
+};
+
 function displayUTP(utpData: {}) {
 	const utpDiv = document.getElementById("utp");
 	const pre = document.createElement("pre");
 	pre.textContent = JSON.stringify(utpData, null, 2);
 
-	if(utpDiv) {
+	if (utpDiv) {
 		utpDiv.appendChild(pre);
 	}
-
 }
 
 function processUTP(utpCookie: chrome.cookies.Cookie) {
-    const utpData = decodeJWT(utpCookie.value);
-    return utpData;
+	const utpData = decodeJWT(utpCookie.value);
+	return utpData;
 }
 
 function processTAC(tacCookie: chrome.cookies.Cookie) {
-    const tacCookieData = decodeJWT(tacCookie.value);
-    const tacWithJSONSub = {
+	const tacCookieData = decodeJWT(tacCookie.value);
+	const tacWithJSONSub = {
 		...tacCookieData,
 		sub: JSON.parse(tacCookieData.sub),
 	};
-    return tacWithJSONSub;
+	return tacWithJSONSub;
 }
 
 function decodeJWT(token: string) {

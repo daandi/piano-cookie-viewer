@@ -18,7 +18,7 @@ h3 {
     border-bottom: 1px solid cornflowerblue;
 }
 
-pre {
+pre, code {
     margin-top:0.1 rem;
     background-color: whitesmoke;
     padding: 3px;
