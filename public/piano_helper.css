@@ -1,16 +1,28 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
 #main_header {
     font-size:xx-large;
-    background-color:lightgray;
-    margin:0.2 rem;
+    padding:0.2 rem;
+    border-bottom: 3px solid cornflowerblue;
 }
 
 h2 {
-    background-color:rgb(105, 193, 184);
-    margin:0.2 rem;
+    padding:0.2 rem;
+    border-bottom: 2px solid cornflowerblue;
+}
+
+h3 {
+    padding:0.2 rem;
+    border-bottom: 1px solid cornflowerblue;
 }
 
 pre {
-    background-color: lightgray;
+    margin-top:0.1 rem;
+    background-color: whitesmoke;
+    padding: 3px;
+    border: 1px solid gray;
     font-size: xx-small;
 }
 
