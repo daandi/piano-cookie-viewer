@@ -3,7 +3,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
    mode: "production",
    entry: {
-      background: path.resolve(__dirname, "..", "src", "piano_helper.js"),
+      piano_helper: path.resolve(__dirname, "..", "src", "piano_helper.js"),
    },
    output: {
       path: path.join(__dirname, "../dist"),
