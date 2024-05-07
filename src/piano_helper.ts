@@ -2,13 +2,8 @@
 (async function initPopupWindow() {
 	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-	//const cookieList = document.getElementById("cookie-list");
-
 	if (tab?.url) {
 		try {
-			const domain = new URL(tab.url).host.replace("www", "");
-			//const cookieListData = await chrome.cookies.getAll({ domain });
-			//fillCookieList(cookieListData, cookieList);
 			const url = tab.url;
 			
             const tacCookie = await chrome.cookies.get({ name: "__tac", url });
