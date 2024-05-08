@@ -35,31 +35,25 @@ interface TACData {
 	aud: string;
 	sub: {
 		u: string;
-		al: {
+		al?: {
 			[key: string]: TACSubscription[]
 		}
 	}
 };
 
 interface UTPData {
-  aud: string,
-  login_timestamp: number,
-  given_name: string,
-  family_name: string,
-  email: string
+	aud: string,
+	login_timestamp: number,
+	given_name: string,
+	family_name: string,
+	email: string,
+	sub: string
 }
 
 interface TACSubscription { r: string; e: number; ia: boolean };
 
 function displayTAC(tacData: TACData) {
-	renderDataOnElement(tacData.aud, "tac-aid");
-	renderDataOnElement(tacData.sub.u, "tac-user-id");
 
-	const subscriptions = tacData.sub.al[tacData.aud];
-	const activeSubs = subscriptions.filter(s => s.ia);
-	const inactiveSubs = subscriptions.filter(s => !s.ia);
-	renderSubscriptions(activeSubs, 'tac-active-subscriptions');
-	renderSubscriptions(inactiveSubs, 'tac-inactive-subscriptions');
 
 	const tacDiv = document.getElementById("tac");
 	const pre = document.createElement("pre");
@@ -68,6 +62,19 @@ function displayTAC(tacData: TACData) {
 	if (tacDiv) {
 		tacDiv.appendChild(pre);
 	}
+
+	renderDataOnElement(tacData.aud, "tac-aid");
+	renderDataOnElement(tacData.sub.u, "tac-user-id");
+
+	// there may be no subscriptions
+	if (tacData.sub.al) {
+		const subscriptions = tacData.sub.al[tacData.aud];
+		const activeSubs = subscriptions.filter(s => s.ia);
+		const inactiveSubs = subscriptions.filter(s => !s.ia);
+		renderSubscriptions(activeSubs, 'tac-active-subscriptions');
+		renderSubscriptions(inactiveSubs, 'tac-inactive-subscriptions');
+	}
+
 }
 
 function renderSubscriptions(subscriptions: TACSubscription[], idSelector: string) {
@@ -76,6 +83,9 @@ function renderSubscriptions(subscriptions: TACSubscription[], idSelector: strin
 };
 
 function displayUTP(utpData: UTPData) {
+
+
+
 	const utpDiv = document.getElementById("utp");
 	const pre = document.createElement("pre");
 	pre.textContent = JSON.stringify(utpData, null, 2);
@@ -83,6 +93,12 @@ function displayUTP(utpData: UTPData) {
 	if (utpDiv) {
 		utpDiv.appendChild(pre);
 	}
+
+	renderDataOnElement(utpData.aud, 'utp-aid');
+	renderDataOnElement(utpData.sub, 'utp-user-id');
+	renderDataOnElement(`${utpData.given_name} ${utpData.family_name}`, 'utp-name');
+	renderDataOnElement(utpData.email, 'utp-email');
+	renderDataOnElement(utpData.login_timestamp.toString(), 'utp-last-login');
 }
 
 function processUTP(utpCookie: chrome.cookies.Cookie) {
