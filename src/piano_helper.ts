@@ -41,6 +41,14 @@ interface TACData {
 	}
 };
 
+interface UTPData {
+  aud: string,
+  login_timestamp: number,
+  given_name: string,
+  family_name: string,
+  email: string
+}
+
 interface TACSubscription { r: string; e: number; ia: boolean };
 
 function displayTAC(tacData: TACData) {
@@ -48,10 +56,10 @@ function displayTAC(tacData: TACData) {
 	renderDataOnElement(tacData.sub.u, "tac-user-id");
 
 	const subscriptions = tacData.sub.al[tacData.aud];
-	const validSubscriptions = subscriptions.filter(s => s.ia);
-	const invalidSubscriptions = subscriptions.filter(s => !s.ia);
-	renderSubscriptions(validSubscriptions, 'tac-valid-subscriptions');
-	renderSubscriptions(invalidSubscriptions, 'tac-invalid-subscriptions');
+	const activeSubs = subscriptions.filter(s => s.ia);
+	const inactiveSubs = subscriptions.filter(s => !s.ia);
+	renderSubscriptions(activeSubs, 'tac-active-subscriptions');
+	renderSubscriptions(inactiveSubs, 'tac-inactive-subscriptions');
 
 	const tacDiv = document.getElementById("tac");
 	const pre = document.createElement("pre");
@@ -67,7 +75,7 @@ function renderSubscriptions(subscriptions: TACSubscription[], idSelector: strin
 	renderDataOnElement(subscriptionsString, idSelector);
 };
 
-function displayUTP(utpData: {}) {
+function displayUTP(utpData: UTPData) {
 	const utpDiv = document.getElementById("utp");
 	const pre = document.createElement("pre");
 	pre.textContent = JSON.stringify(utpData, null, 2);
