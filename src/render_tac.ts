@@ -1,4 +1,4 @@
-import { TACData, TACSubscription } from "./tac";
+import type { TACData, TACSubscription } from "./tac";
 import { renderDataOnElement } from "./render";
 
 export function displayTAC(tacData: TACData) {
