@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && vite build"
+    "test": "tsc --noEmit && vitest",
+    "build": "tsc --noEmit && vite build",
+    "coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "Andreas Neumann",
@@ -14,6 +15,7 @@
     "@types/chrome": "^0.0.267",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
-    "vite": "^5.2.11"
+    "vite": "^5.2.11",
+    "vitest": "^1.6.0"
   }
 }

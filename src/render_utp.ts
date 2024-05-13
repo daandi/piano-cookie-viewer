@@ -1,5 +1,6 @@
 import { renderDataOnElement } from "./render";
-import { UTPData } from "./utp";
+import type { UTPData } from "./utp";
+import { humanReadableTimestamp } from "./timestamp";
 
 export function displayUTP(utpData: UTPData) {
 	const utpDiv = document.getElementById("utp");
@@ -14,5 +15,5 @@ export function displayUTP(utpData: UTPData) {
 	renderDataOnElement(utpData.sub, 'utp-user-id');
 	renderDataOnElement(`${utpData.given_name} ${utpData.family_name}`, 'utp-name');
 	renderDataOnElement(utpData.email, 'utp-email');
-	renderDataOnElement(utpData.login_timestamp.toString(), 'utp-last-login');
+	renderDataOnElement(humanReadableTimestamp(utpData.login_timestamp, 'en-UK'), 'utp-last-login');
 }

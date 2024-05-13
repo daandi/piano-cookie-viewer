@@ -1,6 +1,6 @@
 import decodeJWT from "./jwt";
 
-export interface UTPData {
+export type UTPData = {
 	aud: string,
 	login_timestamp: number,
 	given_name: string,
@@ -9,7 +9,13 @@ export interface UTPData {
 	sub: string
 }
 
+type RawUTPData = Omit<UTPData, 'login_timestamp'> & {login_timestamp: string}
+
 export function processUTP(utpCookie: chrome.cookies.Cookie) : UTPData {
-	const utpData = decodeJWT(utpCookie.value);
+	const rawUTPData: RawUTPData = decodeJWT(utpCookie.value);
+	const utpData = {
+		...rawUTPData,
+		login_timestamp: Number(rawUTPData.login_timestamp)
+	}
 	return utpData;
 }
